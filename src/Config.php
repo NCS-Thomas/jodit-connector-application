@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package    jodit
  *
@@ -6,7 +7,6 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  * @link       https://xdsoft.net/jodit/
  */
-
 namespace Jodit;
 
 /**
@@ -23,6 +23,7 @@ namespace Jodit;
  * @package jodit
  */
 class Config {
+
 	/**
 	 * @var Config | false
 	 */
@@ -65,6 +66,7 @@ class Config {
 	];
 
 	private $data = [];
+
 	/**
 	 * @var Config[]
 	 */
@@ -100,8 +102,6 @@ class Config {
 			$this->parent = new Config(self::$defaultOptions, false);
 		}
 
-
-
 		if (isset($data->sources) and is_array($data->sources) and count($data->sources)) {
 			foreach ($data->sources as $key => $source) {
 				$this->sources[$key] = new Config($source, $this);
@@ -109,8 +109,6 @@ class Config {
 		} else {
 			$this->sources['default'] = $this;
 		}
-
-
 	}
 
 	/**
@@ -158,7 +156,6 @@ class Config {
 
 		return $root;
 	}
-
 
 	/**
 	 * Get source by name
