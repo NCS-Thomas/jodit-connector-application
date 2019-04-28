@@ -54,29 +54,26 @@ abstract class Application extends BaseApplication{
 				continue;
 			}
 
+			$relative = str_replace(realpath($source->getRoot()) . Consts::DS, '', $path);
+
 			$sourceData = (object)[
 				'baseurl' => $source->baseurl,
-				'path' =>  str_replace(realpath($source->getRoot()) . Consts::DS, '', $path),
+				'path' =>  $relative,
 				'folders' => [],
 			];
 
 			$sourceData->folders[] = $path == $source->getRoot() ? '.' : '..';
 
-			$dir = opendir($path);
-			while ($file = readdir($dir)) {
-				if (
-					$file != '.' &&
-					$file != '..' &&
-					is_dir($path . $file) and
-					(
-						!$this->config->createThumb ||
-						$file !== $this->config->thumbFolderName
-					) and
-					!in_array($file, $this->config->excludeDirectoryNames)
-				) {
-					$sourceData->folders[] = $file;
-				}
-			}
+			foreach ($source->getFilesystem()->listContents($relative) as $file) {
+			    list($type, $name) = array_values($file);
+
+			    if ($type === 'dir'
+                    && (!$this->config->createThumb || $name !== $this->config->thumbFolderName)
+                    && !in_array($name, $this->config->excludeDirectoryNames)
+                ) {
+			        $sourceData->folders[] = $name;
+                }
+            }
 
 			$sources[$key] = $sourceData;
 		}
