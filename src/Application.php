@@ -27,8 +27,6 @@ abstract class Application extends BaseApplication{
 			if ($this->accessControl->isAllow($this->getUserRole(), $this->action, $source->getPath())) {
 				$sources[$key] = $this->read($source);
 			}
-
-
 		}
 
 		return [
