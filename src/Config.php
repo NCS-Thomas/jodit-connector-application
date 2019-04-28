@@ -9,6 +9,9 @@
  */
 namespace Jodit;
 
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+
 /**
  * Class Config
  * @property string $thumbFolderName
@@ -95,6 +98,20 @@ class Config {
 		$data = (object)$data;
 		$this->data = $data;
 
+		$adapter = isset($data->adapter) ? $data->adapter : 'local';
+
+		$this->adapter = null;
+		if (!empty($data->root)) {
+		    if ($adapter === 'local') {
+                $this->adapter = new Local($data->root);
+            }
+        }
+
+		$this->filesystem = null;
+		if ($this->adapter) {
+		    $this->filesystem = new Filesystem($this->adapter);
+        }
+
 		if ($parent === null) {
 			if (!$this->baseurl) {
 				$this->baseurl = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS']) ? 'https://' : 'http://') . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . '/';
@@ -110,6 +127,13 @@ class Config {
 			$this->sources['default'] = $this;
 		}
 	}
+
+    /**
+     * @return Filesystem
+     */
+	public function getFilesystem() {
+	    return $this->filesystem;
+    }
 
 	/**
 	 * Get full path for $source->root with trailing slash
