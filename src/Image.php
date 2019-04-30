@@ -9,6 +9,7 @@
 namespace Jodit;
 
 use abeautifulsite\SimpleImage;
+use League\Flysystem\Filesystem;
 
 class Image {
 	static $colors = [
@@ -69,7 +70,7 @@ class Image {
 		imagefilledellipse($im, $x2-$radius, $y2-$radius, $radius*2, $radius*2, $color);
 	}
 
-	static function generateIcon(File $file, $iconname, $width = 100, $height = 100) {
+	static function generateIcon(Filesystem $filesystem, File $file, $iconname, $width = 100, $height = 100) {
 		$im     = imagecreatetruecolor($width, $height);
 		imageantialias ( $im , true);
 
@@ -129,34 +130,35 @@ class Image {
 		$px     = (($width - $width / 5) - ($box[2] - $box[0])) / 2;
 		imagettftext($im, 20, 0, $px, $height - $height / 4.5, $white, __DIR__ . '/assets/arial.ttf', strtoupper($word));
 
-
-		imagepng($im, $iconname);
+        $tempFile = sys_get_temp_dir().'_icon'.(string) microtime().'.png';
+		imagepng($im, $tempFile);
 		imagecolordeallocate($im, $black );
 		imagecolordeallocate($im, $main );
 		imagecolordeallocate($im, $dark );
 		imagecolordeallocate($im, $shadow );
 		imagecolordeallocate($im, $white );
 		imagedestroy($im);
+
+		$filesystem->put($iconname, file_get_contents($tempFile));
 	}
 
-	/**
-	 * @param \Jodit\File $file
-	 *
-	 * @return \Jodit\File
-	 */
-	static function getThumb(File $file, Config $config) {
+    /**
+     * @param Filesystem $filesystem
+     * @param \Jodit\File $file
+     * @param Config $config
+     *
+     * @return \Jodit\File
+     * @throws \Exception
+     */
+	static function getThumb(Filesystem $filesystem, File $file, Config $config) {
 		$path = $file->getFolder();
-
-		if (!is_dir($path . $config->thumbFolderName)) {
-			mkdir($path . $config->thumbFolderName, 0777);
-		}
 
 		$thumbName = $path . $config->thumbFolderName . Consts::DS . $file->getName();
 		if (!$file->isImage()) {
 			$thumbName = $path . $config->thumbFolderName . Consts::DS . $file->getName() . '.png';
 		}
 
-		if (!file_exists($thumbName)) {
+		if (!$filesystem->has($thumbName)) {
 			if ($file->isImage()) {
 				try {
 					$img = new SimpleImage($file->getPath());
@@ -167,10 +169,10 @@ class Image {
 					return $file;
 				}
 			} else {
-				self::generateIcon($file, $thumbName);
+				self::generateIcon($filesystem, $file, $thumbName);
 			}
 		}
 
-		return new File($thumbName);
+        return new File($filesystem, $thumbName);
 	}
 }
