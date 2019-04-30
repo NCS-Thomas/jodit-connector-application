@@ -10,31 +10,39 @@
 
 namespace Jodit;
 
+use League\Flysystem\Filesystem;
+
 /**
  * Class Files
  */
 class File {
 	private $path = '';
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
 
-	/**
-	 * @param {string} $path
-	 */
-	function __construct($path) {
-		$path = realpath($path);
-
-		if (!$path) {
+    /**
+     * @param Filesystem $filesystem
+     * @param {string} $path
+     * @throws \Exception
+     */
+	function __construct(Filesystem $filesystem, $path) {
+		if (!$filesystem->has($path)) {
 			throw new \Exception('File not exists', Consts::ERROR_CODE_NOT_EXISTS);
 		}
 
 		$this->path = $path;
-	}
+        $this->filesystem = $filesystem;
+    }
 
-	/**
-	 * Check file extension
-	 *
-	 * @param {Source} $source
-	 * @return bool
-	 */
+    /**
+     * Check file extension
+     *
+     * @param {Source} $source
+     * @return bool
+     * @throws \Exception
+     */
 	public function isGoodFile(Config $source) {
 		$info = pathinfo($this->path);
 
@@ -42,9 +50,15 @@ class File {
 			return false;
 		}
 
-		if (in_array(strtolower($info['extension']), $source->imageExtensions) and !$this->isImage()) {
-			return false;
-		}
+        $isImage = false;
+        try {
+            $img = new SimpleImage($source->getFilesystem(), $this->path);
+            $isImage = $img->isImage();
+        } catch (\Exception $exception) {}
+
+        if (in_array(strtolower($info['extension']), $source->imageExtensions) and !$isImage) {
+            return false;
+        }
 
 		return true;
 	}
