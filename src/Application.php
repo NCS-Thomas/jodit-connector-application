@@ -244,6 +244,7 @@ abstract class Application extends BaseApplication{
 	 */
 	public function actionFolderCreate() {
 		$source = $this->getSource();
+		$filesystem = $this->getSource()->getFilesystem();
 		$destinationPath = $source->getPath();
 
 		$this->accessControl->checkPermission($this->getUserRole(), $this->action, $destinationPath);
@@ -252,9 +253,10 @@ abstract class Application extends BaseApplication{
 
 		if ($destinationPath) {
 			if ($folderName) {
-				if (!realpath($destinationPath . $folderName)) {
-					mkdir($destinationPath . $folderName, $source->defaultPermission);
-					if (is_dir($destinationPath . $folderName)) {
+				if (!$filesystem->has($folderName)) {
+				    // @todo manage rights
+                    $filesystem->createDir($folderName);
+					if ($filesystem->has($folderName)) {
 						return ['messages' => ['Directory successfully created']];
 					}
 					throw new \Exception('Directory was not created', Consts::ERROR_CODE_NOT_EXISTS);
