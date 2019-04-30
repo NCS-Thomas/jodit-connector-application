@@ -153,6 +153,7 @@ abstract class BaseApplication {
 
 	protected function getImageEditorInfo() {
 		$source = $this->getSource();
+		$filesystem = $source->getFilesystem();
 		$path = $source->getPath();
 
 		$file = $this->request->name;
@@ -172,7 +173,7 @@ abstract class BaseApplication {
 
 		$newName = $this->request->newname ?  Helper::makeSafe($this->request->newname) : '';
 
-		if (!$path || !$file || !file_exists($path . $file) || !is_file($path . $file)) {
+		if (!$path || !$file || !$filesystem->has($file)) {
 			throw new \Exception('File not exists', Consts::ERROR_CODE_NOT_EXISTS);
 		}
 
@@ -197,9 +198,10 @@ abstract class BaseApplication {
 			$newName = $file;
 		}
 
-		if (file_exists($path . $this->config->thumbFolderName . Consts::DS . $newName)) {
-			unlink($path . $this->config->thumbFolderName . Consts::DS . $newName);
-		}
+		$thumb = $this->config->thumbFolderName . Consts::DS . $newName;
+		if ($filesystem->has($thumb)) {
+		    $filesystem->delete($thumb);
+        }
 
 		$info = $img->get_original_info();
 
