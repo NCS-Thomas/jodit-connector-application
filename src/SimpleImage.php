@@ -3,7 +3,6 @@
 namespace Jodit;
 
 use abeautifulsite\SimpleImage as BaseSimpleImage;
-use League\Flysystem\FileExistsException;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
 
@@ -109,7 +108,6 @@ class SimpleImage extends BaseSimpleImage
 
     /**
      * @param $filename
-     * @throws FileExistsException
      */
     private function upload($filename): void
     {
