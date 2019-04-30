@@ -400,13 +400,13 @@ abstract class Application extends BaseApplication{
 
 			$root = $source->getPath();
 
-			if (file_exists($root . $path) && is_file($root . $path)) {
-				$file = new File($root . $path);
-				if ($file->isGoodFile($source)) {
-					$found = true;
-					break;
-				}
-			}
+			if ($source->getFilesystem()->has($path)) {
+                $file = new File($source->getFilesystem(),$path);
+                if ($file->isGoodFile($source)) {
+                    $found = true;
+                    break;
+                }
+            }
 		}
 
 		if (!$found) {
