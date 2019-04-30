@@ -8,8 +8,6 @@
  */
 namespace Jodit;
 
-use abeautifulsite\SimpleImage;
-
 abstract class BaseApplication {
 
 	/**
@@ -177,11 +175,7 @@ abstract class BaseApplication {
 			throw new \Exception('File not exists', Consts::ERROR_CODE_NOT_EXISTS);
 		}
 
-		$img = new SimpleImage();
-
-
-		$img->load($path . $file);
-
+		$img = new SimpleImage($filesystem, $file);
 
 		if ($newName) {
 			$info = pathinfo($path . $file);
