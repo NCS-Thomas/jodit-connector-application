@@ -332,11 +332,9 @@ abstract class Application extends BaseApplication{
 			throw new \Exception('Height not specified', Consts::ERROR_CODE_BAD_REQUEST);
 		}
 
-
 		$info->img
 			->resize((int)$info->box->w, (int)$info->box->h)
-			->save($info->path . $info->newname, $source->quality);
-
+			->save($info->newname, $source->quality);
 	}
 
 	public function actionImageCrop() {
