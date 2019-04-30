@@ -315,11 +315,13 @@ abstract class BaseApplication {
 	 * @throws \Exception
 	 */
 	public function read(Config $source) {
+	    $filesystem = $source->getFilesystem();
 		$path = $source->getPath();
+        $relative = str_replace(realpath($source->getRoot()) . Consts::DS, '', $path);
 
 		$sourceData = (object)[
 			'baseurl' => $source->baseurl,
-			'path' =>  str_replace(realpath($source->getRoot()) . Consts::DS, '', $path),
+			'path' =>  $relative,
 			'files' => [],
 		];
 
@@ -329,32 +331,29 @@ abstract class BaseApplication {
 			return $sourceData;
 		}
 
-
-		$dir = opendir($path);
-
 		$config = $this->config;
 
-		while ($file = readdir($dir)) {
-			if ($file != '.' && $file != '..' && is_file($path . $file)) {
-				$file = new File($path . $file);
+        foreach ($filesystem->listContents($relative) as $file) {
+            list($type, $name, $changed, $size) = array_values($file);
+            if ($type === 'file') {
+                $f = new File($filesystem, $name);
 
-				if ($file->isGoodFile($source)) {
-					$item = [
-						'file' => $file->getPathByRoot($source),
-					];
+                if ($f->isGoodFile($source)) {
+                    $item = [
+                        'file' => $name,
+                        'changed' => date($config->datetimeFormat, $changed),
+                        'size' => Helper::humanFileSize($size),
+                        'isImage' => $f->isImage(),
+                    ];
 
-					if ($config->createThumb || !$file->isImage()) {
-						$item['thumb'] = Image::getThumb($file, $source)->getPathByRoot($source);
-					}
+                    if ($config->createThumb || !$f->isImage()) {
+                        $item['thumb'] = Image::getThumb($filesystem, $f, $source)->getPathByRoot($source);
+                    }
 
-					$item['changed'] = date($config->datetimeFormat, $file->getTime());
-					$item['size'] = Helper::humanFileSize($file->getSize());
-					$item['isImage'] = $file->isImage();
-
-					$sourceData->files[] = $item;
-				}
-			}
-		}
+                    $sourceData->files[] = $item;
+                }
+            }
+        }
 
 		return $sourceData;
 	}
