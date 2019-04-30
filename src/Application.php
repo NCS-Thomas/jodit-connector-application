@@ -336,6 +336,7 @@ abstract class Application extends BaseApplication{
 		$info->img
 			->resize((int)$info->box->w, (int)$info->box->h)
 			->save($info->path . $info->newname, $source->quality);
+
 	}
 
 	public function actionImageCrop() {
@@ -361,11 +362,10 @@ abstract class Application extends BaseApplication{
 			throw new \Exception('Height not specified', Consts::ERROR_CODE_BAD_REQUEST);
 		}
 
-		$info->img
+        $info->img
 			->crop((int)$info->box->x, (int)$info->box->y, (int)$info->box->x + (int)$info->box->w, (int)$info->box->y + (int)$info->box->h)
-			->save($info->path . $info->newname, $source->quality);
-
-	}
+			->save($info->newname, $source->quality);
+    }
 
 	/**
 	 * Get filepath by URL for local files
