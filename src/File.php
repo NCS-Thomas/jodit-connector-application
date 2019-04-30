@@ -67,17 +67,18 @@ class File {
 	 * Remove file
 	 */
 	public function remove() {
-		$file = basename($this->path);
-		$thumb = dirname($this->path) . Consts::DS . Jodit::$app->getSource()->thumbFolderName . Consts::DS . $file;
+	    $thumbFolder = Jodit::$app->getSource()->thumbFolderName . Consts::DS;
+		$thumb = $thumbFolder . $this->path;
 
-		if (file_exists($thumb)) {
-			unlink($thumb);
-			if (!count(glob(dirname($thumb) . Consts::DS . "*"))) {
-				rmdir(dirname($thumb));
-			}
+		if ($this->filesystem->has($thumb)) {
+			$this->filesystem->delete($thumb);
+
+            if (0 === count($this->filesystem->listContents($thumbFolder))) {
+                $this->filesystem->deleteDir($thumbFolder);
+            }
 		}
 
-		return unlink($this->path);
+		return $this->filesystem->delete($this->path);
 	}
 
 	/**
