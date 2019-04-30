@@ -5,6 +5,7 @@ namespace Jodit;
 use abeautifulsite\SimpleImage as BaseSimpleImage;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
+use PHPUnit\Runner\Exception;
 
 class SimpleImage extends BaseSimpleImage
 {
@@ -74,6 +75,36 @@ class SimpleImage extends BaseSimpleImage
     }
 
     /**
+     * @return bool
+     */
+    public function isImage(): bool
+    {
+        if (!in_array($this->getExtension($this->localFilename), ['jpg', 'gif', 'png', 'bmp'])) {
+            return false;
+        }
+
+        try {
+            if (!function_exists('exif_imagetype') && !function_exists('Jodit\exif_imagetype')) {
+                function exif_imagetype($filename)
+                {
+                    if ((list(, , $type) = getimagesize($filename)) !== false) {
+                        return $type;
+                    }
+
+                    return false;
+                }
+            }
+
+            return in_array(
+                exif_imagetype($this->localFilename),
+                [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP]
+            );
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
      * @param $filename
      * @return string
      */
@@ -92,7 +123,7 @@ class SimpleImage extends BaseSimpleImage
      */
     private function getExtension($filename): string
     {
-        return pathinfo($filename, PATHINFO_EXTENSION);
+        return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
 
     /**
