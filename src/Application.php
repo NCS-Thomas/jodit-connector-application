@@ -172,7 +172,7 @@ abstract class Application extends BaseApplication{
 	 */
 	public function actionFileRemove() {
 		$source = $this->getSource();
-
+        $filesystem = $source->getFilesystem();
 		$file_path = false;
 
 		$path = $source->getPath();
@@ -188,12 +188,12 @@ abstract class Application extends BaseApplication{
 			$file_path = realpath($path . $target);
 		}
 
-		if (!$file_path || !file_exists($file_path)) {
-			throw new \Exception('File or directory not exists ' . $path . $target, Consts::ERROR_CODE_NOT_EXISTS);
+		if (!$file_path || !$filesystem->has($target)) {
+			throw new \Exception('File or directory not exists ' . $target, Consts::ERROR_CODE_NOT_EXISTS);
 		}
 
-		if (is_file($file_path)) {
-			$file = new File($file_path);
+		if ($filesystem->has($target)) {
+			$file = new File($filesystem, $target);
 			if (!$file->remove()) {
 				$error = (object)error_get_last();
 				throw new \Exception('Delete failed! ' . $error->message, Consts::ERROR_CODE_IS_NOT_WRITEBLE);
