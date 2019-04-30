@@ -113,6 +113,6 @@ class SimpleImage extends BaseSimpleImage
      */
     private function upload($filename): void
     {
-        $this->filesystem->write($filename, file_get_contents($this->localFilename));
+        $this->filesystem->put($filename, file_get_contents($this->localFilename));
     }
 }
