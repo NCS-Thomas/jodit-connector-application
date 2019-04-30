@@ -108,7 +108,7 @@ abstract class Application extends BaseApplication{
 
 		Helper::downloadRemoteFile($url, $source->getRoot() . $filename);
 
-		$file = new File($source->getRoot() . $filename);
+		$file = new File($source->getFilesystem(), $filename);
 
 		try {
 			if (!$file->isGoodFile($source)) {
