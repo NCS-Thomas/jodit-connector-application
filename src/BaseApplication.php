@@ -262,35 +262,28 @@ abstract class BaseApplication {
 						throw new \Exception(isset(Helper::$upload_errors[$files['error'][$i]]) ? Helper::$upload_errors[$files['error'][$i]] : 'Error', $files['error'][$i]);
 					}
 
-					$path     = $source->getPath();
 					$tmp_name = $files['tmp_name'][$i];
-					$new_path = $path . Helper::makeSafe($files['name'][$i]);
+					$filename = $files['name'][$i];
 
-					if (!move_uploaded_file($tmp_name, $new_path)) {
-						if (!is_writable($path)) {
-							throw new \Exception('Destination directory is not writeble', Consts::ERROR_CODE_IS_NOT_WRITEBLE);
-						}
+                    if ($source->maxFileSize and filesize($tmp_name) > Helper::convertToBytes($source->maxFileSize)) {
+                        throw new \Exception('File size exceeds the allowable', Consts::ERROR_CODE_FORBIDDEN);
+                    }
 
-						throw new \Exception('No files have been uploaded', Consts::ERROR_CODE_NO_FILES_UPLOADED);
-					}
+                    try {
+                        $this->accessControl->checkPermission($this->getUserRole(), $this->action, $source->getRoot(), pathinfo($tmp_name, PATHINFO_EXTENSION));
+                    } catch (\Exception $e) {
+                        throw $e;
+                    }
 
-					$file = new File($new_path);
+					if (!$source->getFilesystem()->put($filename, file_get_contents($tmp_name))) {
+                        throw new \Exception('No files have been uploaded', Consts::ERROR_CODE_NO_FILES_UPLOADED);
+                    }
 
-					try {
-						$this->accessControl->checkPermission($this->getUserRole(), $this->action, $source->getRoot(), pathinfo($file->getPath(), PATHINFO_EXTENSION));
-					} catch (\Exception $e) {
-						$file->remove();
-						throw $e;
-					}
+					$file = new File($source->getFilesystem(), $filename);
 
 					if (!$file->isGoodFile($source)) {
 						$file->remove();
 						throw new \Exception('File type is not in white list', Consts::ERROR_CODE_FORBIDDEN);
-					}
-
-					if ($source->maxFileSize and $file->getSize() > Helper::convertToBytes($source->maxFileSize)) {
-						$file->remove();
-						throw new \Exception('File size exceeds the allowable', Consts::ERROR_CODE_FORBIDDEN);
 					}
 
 					$output[] = $file;
