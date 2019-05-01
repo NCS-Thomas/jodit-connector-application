@@ -11,6 +11,7 @@
 namespace Jodit;
 
 use League\Flysystem\Filesystem;
+use SebastianBergmann\CodeCoverage\Report\PHP;
 
 /**
  * Class Files
@@ -28,6 +29,8 @@ class File {
      * @throws \Exception
      */
 	function __construct(Filesystem $filesystem, $path) {
+	    $this->initExifImageType();
+
 		if (!$filesystem->has($path)) {
 			throw new \Exception('File not exists', Consts::ERROR_CODE_NOT_EXISTS);
 		}
@@ -130,27 +133,40 @@ class File {
 		return str_replace($root, '', $path);
 	}
 
-
 	/**
 	 * Check by mimetype what file is image
 	 *
 	 * @return bool
-	 */
-	 public function isImage() {
-		try {
-			if (!function_exists('exif_imagetype') && !function_exists('Jodit\exif_imagetype')) {
-				function exif_imagetype($filename) {
-					if ((list(, , $type) = getimagesize($filename)) !== false) {
-						return $type;
-					}
+     */
+    public function isImage(): bool
+    {
+        $allowedMimeTypes = [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP];
 
-					return false;
-				}
-			}
+        try {
+            $mimeType = exif_imagetype(
+                (new SimpleImage($this->filesystem, $this->getPath()))->localFilename()
+            );
 
-			return in_array(exif_imagetype($this->getPath()), [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP]);
-		} catch (\Exception $e) {
-			return false;
-		}
-	}
+            return in_array($mimeType, $allowedMimeTypes);
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Initialize the exif_imagetype function. As it might not be available
+     */
+    private function initExifImageType(): void
+    {
+        if (!function_exists('exif_imagetype') && !function_exists('Jodit\exif_imagetype')) {
+            function exif_imagetype($filename)
+            {
+                if ((list(, , $type) = getimagesize($filename)) !== false) {
+                    return $type;
+                }
+
+                return false;
+            }
+        }
+    }
 }
