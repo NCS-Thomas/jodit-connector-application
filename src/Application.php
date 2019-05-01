@@ -275,17 +275,21 @@ abstract class Application extends BaseApplication{
 	 */
 	private function movePath() {
 		$source = $this->getSource();
+		$filesystem = $source->getFilesystem();
 		$destinationPath = $source->getPath();
-		$sourcePath = $source->getPath($this->request->from);
+        $sourcePath = $source->getPath($this->request->from);
+
+        $from = $this->request->from;
+        $to = $this->request->path.DIRECTORY_SEPARATOR.basename($from);
 
 		$this->accessControl->checkPermission($this->getUserRole(), $this->action, $destinationPath);
 		$this->accessControl->checkPermission($this->getUserRole(), $this->action, $sourcePath);
 
-		if ($sourcePath) {
-			if ($destinationPath) {
-				if (is_file($sourcePath) or is_dir($sourcePath)) {
-					rename($sourcePath, $destinationPath . basename($sourcePath));
-				} else {
+		if ($from) {
+			if ($to) {
+			    if ($filesystem->has($from)) {
+			        $filesystem->rename($from, $to);
+                } else {
 					throw new \Exception('Not file', Consts::ERROR_CODE_NOT_EXISTS);
 				}
 			} else {
