@@ -14,7 +14,6 @@ class SimpleImage extends BaseSimpleImage
      */
     private $filesystem;
 
-
     /**
      * @var string
      */
@@ -143,5 +142,13 @@ class SimpleImage extends BaseSimpleImage
     private function upload($filename): void
     {
         $this->filesystem->put($filename, file_get_contents($this->localFilename));
+    }
+
+    /**
+     * @return string
+     */
+    public function localFilename(): string
+    {
+        return $this->localFilename;
     }
 }
