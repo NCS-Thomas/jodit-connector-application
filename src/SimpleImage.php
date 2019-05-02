@@ -71,6 +71,7 @@ class SimpleImage extends BaseSimpleImage
         parent::save(null, $quality, $format);
 
         $this->file->save($filename);
+
         return $this;
     }
 
@@ -79,29 +80,7 @@ class SimpleImage extends BaseSimpleImage
      */
     public function isImage(): bool
     {
-        if (!in_array($this->file->getExtension(), ['jpg', 'gif', 'png', 'bmp'])) {
-            return false;
-        }
-
-        try {
-            if (!function_exists('exif_imagetype') && !function_exists('Jodit\exif_imagetype')) {
-                function exif_imagetype($filename)
-                {
-                    if ((list(, , $type) = getimagesize($filename)) !== false) {
-                        return $type;
-                    }
-
-                    return false;
-                }
-            }
-
-            return in_array(
-                exif_imagetype($this->file->localFilename()),
-                [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP]
-            );
-        } catch (Exception $exception) {
-            return false;
-        }
+        return $this->file->isImage();
     }
 
     /**
