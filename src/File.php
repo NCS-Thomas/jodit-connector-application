@@ -55,8 +55,7 @@ class File {
 
         $isImage = false;
         try {
-            $img = new SimpleImage($source->getFilesystem(), $this->path);
-            $isImage = $img->isImage();
+            $isImage = (new WorkFile($source->getFilesystem(), $this->path))->isImage();
         } catch (\Exception $exception) {}
 
         if (in_array(strtolower($info['extension']), $source->imageExtensions) and !$isImage) {
