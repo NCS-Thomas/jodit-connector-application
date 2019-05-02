@@ -46,8 +46,15 @@ class WorkFile
         }
     }
 
-    public function save(): void
+    /**
+     * @param string|null $path
+     */
+    public function save(string $path = null): void
     {
+        if (null !== $path) {
+            $this->path = $path;
+        }
+
         $this->upload();
     }
 
