@@ -265,7 +265,7 @@ abstract class BaseApplication {
 					$tmp_name = $files['tmp_name'][$i];
 					$filename = $files['name'][$i];
 
-                    $file = new WorkFile($source->getFilesystem(), $filename, $tmp_name);
+                    $file = new File($source->getFilesystem(), $filename, $tmp_name);
                     if ($source->maxFileSize and $file->getSize() > Helper::convertToBytes($source->maxFileSize)) {
                         throw new \Exception('File size exceeds the allowable', Consts::ERROR_CODE_FORBIDDEN);
                     }
@@ -328,7 +328,7 @@ abstract class BaseApplication {
         foreach ($filesystem->listContents($relative) as $file) {
             list($type, $name, $changed, $size) = array_values($file);
             if ($type === 'file') {
-                $f = new WorkFile($filesystem, $name);
+                $f = new File($filesystem, $name);
 
                 if ($f->isGoodFile($source)) {
                     $item = [

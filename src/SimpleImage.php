@@ -14,7 +14,7 @@ class SimpleImage extends BaseSimpleImage
     private $filesystem;
 
     /**
-     * @var WorkFile
+     * @var File
      */
     private $file;
 
@@ -36,7 +36,7 @@ class SimpleImage extends BaseSimpleImage
         $this->filesystem = $filesystem;
 
         if (null !== $filename) {
-            $this->file = new WorkFile($filesystem, $filename);
+            $this->file = new File($filesystem, $filename);
         }
 
         parent::__construct($filename, $width, $height, $color);
@@ -50,7 +50,7 @@ class SimpleImage extends BaseSimpleImage
      */
     public function load($filename): SimpleImage
     {
-        $this->file = new WorkFile($this->filesystem, $filename);
+        $this->file = new File($this->filesystem, $filename);
 
         parent::load($this->file->localFilename());
 

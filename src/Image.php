@@ -144,13 +144,13 @@ class Image {
 
     /**
      * @param Filesystem $filesystem
-     * @param \Jodit\WorkFile $file
+     * @param \Jodit\File $file
      * @param Config $config
      *
-     * @return \Jodit\WorkFile
+     * @return \Jodit\File
      * @throws \Exception
      */
-	static function getThumb(Filesystem $filesystem, WorkFile $file, Config $config) {
+	static function getThumb(Filesystem $filesystem, File $file, Config $config) {
 		$path = $file->getFolder();
 
 		$thumbName = $path . $config->thumbFolderName . Consts::DS . $file->getName();
@@ -173,6 +173,6 @@ class Image {
 			}
 		}
 
-        return new WorkFile($filesystem, $thumbName);
+        return new File($filesystem, $thumbName);
 	}
 }
