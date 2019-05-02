@@ -265,7 +265,8 @@ abstract class BaseApplication {
 					$tmp_name = $files['tmp_name'][$i];
 					$filename = $files['name'][$i];
 
-                    if ($source->maxFileSize and filesize($tmp_name) > Helper::convertToBytes($source->maxFileSize)) {
+                    $file = new WorkFile($source->getFilesystem(), $filename, $tmp_name);
+                    if ($source->maxFileSize and $file->getSize() > Helper::convertToBytes($source->maxFileSize)) {
                         throw new \Exception('File size exceeds the allowable', Consts::ERROR_CODE_FORBIDDEN);
                     }
 
@@ -278,8 +279,6 @@ abstract class BaseApplication {
 					if (!$source->getFilesystem()->put($filename, file_get_contents($tmp_name))) {
                         throw new \Exception('No files have been uploaded', Consts::ERROR_CODE_NO_FILES_UPLOADED);
                     }
-
-					$file = new File($source->getFilesystem(), $filename);
 
 					if (!$file->isGoodFile($source)) {
 						$file->remove();
@@ -329,7 +328,7 @@ abstract class BaseApplication {
         foreach ($filesystem->listContents($relative) as $file) {
             list($type, $name, $changed, $size) = array_values($file);
             if ($type === 'file') {
-                $f = new File($filesystem, $name);
+                $f = new WorkFile($filesystem, $name);
 
                 if ($f->isGoodFile($source)) {
                     $item = [

@@ -108,7 +108,7 @@ abstract class Application extends BaseApplication{
 
 		Helper::downloadRemoteFile($url, $source->getRoot() . $filename);
 
-		$file = new File($source->getFilesystem(), $filename);
+		$file = new WorkFile($source->getFilesystem(), $filename);
 
 		try {
 			if (!$file->isGoodFile($source)) {
@@ -147,7 +147,7 @@ abstract class Application extends BaseApplication{
 		$files = $this->move($source);
 
 		$isImages = [];
-		$files = array_map(function (File $file) use ($source, $root, &$isImages) {
+		$files = array_map(function (WorkFile $file) use ($source, $root, &$isImages) {
 			$messages[] = 'File ' . $file->getName() . ' was uploaded';
 			$isImages[] = $file->isImage();
 			return str_replace($root, '', $file->getPath());
@@ -193,7 +193,7 @@ abstract class Application extends BaseApplication{
 		}
 
 		if ($filesystem->has($target)) {
-			$file = new File($filesystem, $target);
+			$file = new WorkFile($filesystem, $target);
 			if (!$file->remove()) {
 				$error = (object)error_get_last();
 				throw new \Exception('Delete failed! ' . $error->message, Consts::ERROR_CODE_IS_NOT_WRITEBLE);
@@ -405,7 +405,7 @@ abstract class Application extends BaseApplication{
 			$root = $source->getPath();
 
 			if ($source->getFilesystem()->has($path)) {
-                $file = new File($source->getFilesystem(),$path);
+                $file = new WorkFile($source->getFilesystem(),$path);
                 if ($file->isGoodFile($source)) {
                     $found = true;
                     break;

@@ -122,11 +122,98 @@ class WorkFile
     }
 
     /**
+     * Check file extension
+     *
+     * @param Config $source
+     * @return bool
+     * @throws \Exception
+     */
+    public function isGoodFile(Config $source) {
+        $info = pathinfo($this->path);
+
+        if (!isset($info['extension']) or (!in_array(strtolower($info['extension']), $source->extensions))) {
+            return false;
+        }
+
+        $isImage = false;
+        try {
+            $isImage = $this->isImage();
+        } catch (\Exception $exception) {}
+
+        if (in_array(strtolower($info['extension']), $source->imageExtensions) and !$isImage) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Remove file
+     * @throws \Exception
+     */
+    public function remove() {
+        $thumbFolder = Jodit::$app->getSource()->thumbFolderName . Consts::DS;
+        $thumb = $thumbFolder . $this->path;
+
+        if ($this->filesystem->has($thumb)) {
+            $this->filesystem->delete($thumb);
+
+            if (0 === count($this->filesystem->listContents($thumbFolder))) {
+                $this->filesystem->deleteDir($thumbFolder);
+            }
+        }
+
+        return $this->filesystem->delete($this->path);
+    }
+
+    /**
      * @return string
      */
     public function getExtension(): string
     {
         return strtolower(pathinfo($this->path, PATHINFO_EXTENSION));
+    }
+
+    /**
+     * @return string
+     */
+    public function getFolder() {
+        return dirname($this->path) . Consts::DS;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName() {
+        return basename($this->path);
+    }
+
+    /**
+     * @return string
+     */
+    public function getPath() {
+        $path = str_replace('\\', Consts::DS, $this->path);
+        return $path;
+    }
+
+    /**
+     * @param Config $source
+     * @return mixed
+     * @throws \Exception
+     */
+    function getPathByRoot(Config $source) {
+        $path = preg_replace('#[\\\\/]#', '/', $this->getPath());
+        $root = preg_replace('#[\\\\/]#', '/',  $source->getPath());
+
+        return str_replace($root, '', $path);
+    }
+
+    /**
+     * @return int
+     */
+    public function getSize(): int
+    {
+        return filesize($this->localFilename);
     }
 
     /**
