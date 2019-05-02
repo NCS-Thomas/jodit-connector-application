@@ -75,14 +75,6 @@ class SimpleImage extends BaseSimpleImage
     }
 
     /**
-     * @return bool
-     */
-    public function isImage(): bool
-    {
-        return $this->file->isImage();
-    }
-
-    /**
      * @return string
      */
     public function localFilename(): string
