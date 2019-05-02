@@ -20,6 +20,11 @@ class SimpleImage extends BaseSimpleImage
     private $localFilename;
 
     /**
+     * @var WorkFile
+     */
+    private $file;
+
+    /**
      * @param Filesystem $filesystem
      * @param string|null $filename
      * @param int|null $width
@@ -37,7 +42,7 @@ class SimpleImage extends BaseSimpleImage
         $this->filesystem = $filesystem;
 
         if (null !== $filename) {
-            $this->download($filename);
+            $this->file = new WorkFile($filesystem, $filename);
         }
 
         parent::__construct($filename, $width, $height, $color);
@@ -51,8 +56,9 @@ class SimpleImage extends BaseSimpleImage
      */
     public function load($filename): SimpleImage
     {
-        $this->download($filename);
-        parent::load($this->localFilename);
+        $this->file = new WorkFile($this->filesystem, $filename);
+
+        parent::load($this->file->localFilename());
 
         return $this;
     }
@@ -69,7 +75,7 @@ class SimpleImage extends BaseSimpleImage
     {
         parent::save(null, $quality, $format);
 
-        $this->upload($filename);
+        $this->file->save($filename);
         return $this;
     }
 
@@ -78,7 +84,7 @@ class SimpleImage extends BaseSimpleImage
      */
     public function isImage(): bool
     {
-        if (!in_array($this->getExtension($this->localFilename), ['jpg', 'gif', 'png', 'bmp'])) {
+        if (!in_array($this->getExtension($this->file->localFilename()), ['jpg', 'gif', 'png', 'bmp'])) {
             return false;
         }
 
@@ -95,7 +101,7 @@ class SimpleImage extends BaseSimpleImage
             }
 
             return in_array(
-                exif_imagetype($this->localFilename),
+                exif_imagetype($this->file->localFilename()),
                 [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP]
             );
         } catch (Exception $exception) {
@@ -103,18 +109,6 @@ class SimpleImage extends BaseSimpleImage
         }
     }
 
-    /**
-     * @param $filename
-     * @return string
-     */
-    private function generateLocalFilename($filename): string
-    {
-        $dir = sys_get_temp_dir();
-        $prefix = '_simpleImage'.(string)microtime(true);
-        $extension = $this->getExtension($filename);
-
-        return $dir.DIRECTORY_SEPARATOR.$prefix.'.'.$extension;
-    }
 
     /**
      * @param $filename
@@ -126,29 +120,10 @@ class SimpleImage extends BaseSimpleImage
     }
 
     /**
-     * @param $filename
-     * @throws FileNotFoundException
-     */
-    private function download($filename): void
-    {
-        $this->localFilename = $this->generateLocalFilename($filename);
-
-        file_put_contents($this->localFilename, $this->filesystem->read($filename));
-    }
-
-    /**
-     * @param $filename
-     */
-    private function upload($filename): void
-    {
-        $this->filesystem->put($filename, file_get_contents($this->localFilename));
-    }
-
-    /**
      * @return string
      */
     public function localFilename(): string
     {
-        return $this->localFilename;
+        return $this->file->localFilename();
     }
 }
