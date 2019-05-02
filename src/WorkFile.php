@@ -32,6 +32,9 @@ class WorkFile
      */
     public function __construct(Filesystem $filesystem, string $path, string $localFilename = null)
     {
+        // initialize exif_imagetype function @todo investigate why? :)
+        $this->initExifImageType();
+
         $this->filesystem = $filesystem;
         $this->path = $path;
 
@@ -86,13 +89,46 @@ class WorkFile
     }
 
     /**
+     * Check by mimetype what file is image
+     *
+     * @return bool
+     */
+    public function isImage(): bool
+    {
+        $allowedMimeTypes = [IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP];
+
+        try {
+            return in_array(exif_imagetype($this->localFilename), $allowedMimeTypes);
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Initialize the exif_imagetype function. As it might not be available
+     */
+    private function initExifImageType(): void
+    {
+        if (!function_exists('exif_imagetype') && !function_exists('Jodit\exif_imagetype')) {
+            function exif_imagetype($filename)
+            {
+                if ((list(, , $type) = getimagesize($filename)) !== false) {
+                    return $type;
+                }
+
+                return false;
+            }
+        }
+    }
+
+    /**
      * @return string
      */
     public function getExtension(): string
     {
         return strtolower(pathinfo($this->path, PATHINFO_EXTENSION));
     }
-    
+
     /**
      * @return string
      */
