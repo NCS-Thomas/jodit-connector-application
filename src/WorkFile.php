@@ -71,14 +71,6 @@ class WorkFile
     }
 
     /**
-     * @return string
-     */
-    private function getExtension(): string
-    {
-        return strtolower(pathinfo($this->path, PATHINFO_EXTENSION));
-    }
-
-    /**
      * @throws FileNotFoundException
      */
     private function download(): void
@@ -93,6 +85,14 @@ class WorkFile
         $this->filesystem->put($this->path, file_get_contents($this->localFilename));
     }
 
+    /**
+     * @return string
+     */
+    public function getExtension(): string
+    {
+        return strtolower(pathinfo($this->path, PATHINFO_EXTENSION));
+    }
+    
     /**
      * @return string
      */
