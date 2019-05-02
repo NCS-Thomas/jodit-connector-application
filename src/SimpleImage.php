@@ -15,11 +15,6 @@ class SimpleImage extends BaseSimpleImage
     private $filesystem;
 
     /**
-     * @var string
-     */
-    private $localFilename;
-
-    /**
      * @var WorkFile
      */
     private $file;
@@ -84,7 +79,7 @@ class SimpleImage extends BaseSimpleImage
      */
     public function isImage(): bool
     {
-        if (!in_array($this->getExtension($this->file->localFilename()), ['jpg', 'gif', 'png', 'bmp'])) {
+        if (!in_array($this->file->getExtension(), ['jpg', 'gif', 'png', 'bmp'])) {
             return false;
         }
 
@@ -107,16 +102,6 @@ class SimpleImage extends BaseSimpleImage
         } catch (Exception $exception) {
             return false;
         }
-    }
-
-
-    /**
-     * @param $filename
-     * @return string
-     */
-    private function getExtension($filename): string
-    {
-        return strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     }
 
     /**
