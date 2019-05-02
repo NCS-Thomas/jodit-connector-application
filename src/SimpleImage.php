@@ -5,7 +5,6 @@ namespace Jodit;
 use abeautifulsite\SimpleImage as BaseSimpleImage;
 use League\Flysystem\FileNotFoundException;
 use League\Flysystem\Filesystem;
-use PHPUnit\Runner\Exception;
 
 class SimpleImage extends BaseSimpleImage
 {
