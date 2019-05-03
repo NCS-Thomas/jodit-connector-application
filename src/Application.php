@@ -209,33 +209,29 @@ abstract class Application extends BaseApplication{
 	 * @throws \Exception
 	 */
 	public function actionFolderRemove() {
-		$source = $this->getSource();
+        $source = $this->getSource();
+        $filesystem = $source->getFilesystem();
 
-		$file_path = false;
+        $path = $source->getPath();
 
-		$path = $source->getPath();
+        $this->accessControl->checkPermission($this->getUserRole(), $this->action, $path);
 
-		$this->accessControl->checkPermission($this->getUserRole(), $this->action, $path);
+        $target = $this->request->name;
 
-		$target = $this->request->name;
+        $parentDir = dirname($target) === '.' ? '/' : dirname($target);
 
-		if (realpath($path . $target) && strpos(realpath($path . $target), $source->getRoot()) !== false) {
-			$file_path = realpath($path . $target);
-		}
+        $isDir = false;
+        foreach ($filesystem->listContents($parentDir) as $item) {
+            if ($item['path'] === $target) {
+                $isDir = ('dir' === $item['type']);
+            }
+        }
 
-		if ($file_path && file_exists($file_path)) {
-			if (is_dir($file_path)) {
-				$thumb = $file_path . Consts::DS . $source->thumbFolderName . Consts::DS;
-				if (is_dir($thumb)) {
-					Helper::deleteDir($thumb);
-				}
-				Helper::deleteDir($file_path);
-			} else {
-				throw new \Exception('It is not a directory!', Consts::ERROR_CODE_IS_NOT_WRITEBLE);
-			}
-		} else {
-			throw new \Exception('Directory not exists', Consts::ERROR_CODE_NOT_EXISTS);
-		}
+        if ($isDir) {
+            $filesystem->deleteDir($target);
+        } else {
+            throw new \Exception('Directory not exists', Consts::ERROR_CODE_NOT_EXISTS);
+        }
 	}
 
 	/**
