@@ -309,7 +309,7 @@ abstract class BaseApplication {
 	public function read(Config $source) {
 	    $filesystem = $source->getFilesystem();
 		$path = $source->getPath();
-        $relative = str_replace(realpath($source->getRoot()) . Consts::DS, '', $path);
+        $relative = str_replace($source->getRoot(), '', $path);
 
 		$sourceData = (object)[
 			'baseurl' => $source->baseurl,
@@ -325,21 +325,20 @@ abstract class BaseApplication {
 
 		$config = $this->config;
 
-        foreach ($filesystem->listContents($relative) as $file) {
-            list($type, $name, $changed, $size) = array_values($file);
-            if ($type === 'file') {
-                $f = new File($filesystem, $name);
+        foreach ($filesystem->listContents($relative) as $item) {
+            if ($item['type'] === 'file') {
+                $file = new File($filesystem, $item['path']);
 
-                if ($f->isGoodFile($source)) {
+                if ($file->isGoodFile($source)) {
                     $item = [
-                        'file' => $name,
-                        'changed' => date($config->datetimeFormat, $changed),
-                        'size' => Helper::humanFileSize($size),
-                        'isImage' => $f->isImage(),
+                        'file' => $file->getName(),
+                        'changed' => date($config->datetimeFormat, $item['timestamp']),
+                        'size' => Helper::humanFileSize($item['size']),
+                        'isImage' => $file->isImage(),
                     ];
 
-                    if ($config->createThumb || !$f->isImage()) {
-                        $item['thumb'] = Image::getThumb($filesystem, $f, $source)->getPathByRoot($source);
+                    if ($config->createThumb || !$file->isImage()) {
+                        $item['thumb'] = Image::getThumb($filesystem, $file, $source)->getPathByRoot($source);
                     }
 
                     $sourceData->files[] = $item;
