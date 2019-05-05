@@ -9,8 +9,11 @@
  */
 namespace Jodit;
 
+use Aws\S3\S3Client;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
 use League\Flysystem\Filesystem;
+use League\Flysystem\Memory\MemoryAdapter;
 
 /**
  * Class Config
@@ -101,10 +104,24 @@ class Config {
 		$adapter = isset($data->adapter) ? $data->adapter : 'local';
 
 		$this->adapter = null;
-		if (!empty($data->root)) {
-		    if ($adapter === 'local') {
-                $this->adapter = new Local($data->root);
+
+		if (LOCAL) {
+            if (!empty($data->root)) {
+                if ($adapter === 'local') {
+                    $this->adapter = new Local($data->root);
+                }
             }
+        } else {
+            $client = new S3Client([
+                'credentials' => [
+                    'key'    => 'AKIAIEVQOUVHUGSYFUIQ',
+                    'secret' => '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',
+                ],
+                'region' => 'eu-west-1',
+                'version' => 'latest',
+            ]);
+
+            $this->adapter = new AwsS3Adapter($client, 'images.ncs.ninja', 'files/');
         }
 
 		$this->filesystem = null;
@@ -143,12 +160,14 @@ class Config {
 	 */
 	public function getRoot() {
 		if ($this->root) {
-
-			if (!is_dir($this->root)) {
+		    /*
+            if (!$this->filesystem->has($this->root)) {
 				throw new \Exception('Root directory not exists ' . $this->root, Consts::ERROR_CODE_NOT_EXISTS);
 			}
+		    */
 
-			return realpath($this->root) . Consts::DS;
+			//return realpath($this->root) . Consts::DS;
+            return $this->root;
 		}
 
 		throw new \Exception('Set root directory for source', Consts::ERROR_CODE_NOT_IMPLEMENTED);
@@ -169,6 +188,7 @@ class Config {
 		}
 
 		//always check whether we are below the root category is not reached
+        /*
 		if (realpath($root . $relativePath) && strpos(realpath($root . $relativePath) . Consts::DS, $root) !== false) {
 			$root = realpath($root . $relativePath);
 			if (is_dir($root)) {
@@ -177,6 +197,8 @@ class Config {
 		} else {
 			throw new \Exception('Path does not exist', Consts::ERROR_CODE_NOT_EXISTS);
 		}
+        */
+        $root = $root . $relativePath;
 
 		return $root;
 	}

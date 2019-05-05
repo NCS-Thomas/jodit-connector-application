@@ -1,23 +1,46 @@
 <?php
 
-$config = [
-	'root' => realpath(__DIR__ . '/files') . '/',
-    'sources' => [
-        'test' => [
-            'root' => realpath(__DIR__ . '/files') . '/',
-            'baseurl' => 'http://localhost:8181/files/',
-        ],
-        'folder1' => [
-            'root' => realpath(__DIR__ .  '/files/folder1') . '/',
-            'baseurl' => 'http://localhost:8181/files/folder1/',
-            'maxFileSize' => '1kb'
-        ]
-    ],
-    'allowCrossOrigin' => true,
-	'accessControl' => [],
+define('LOCAL', false);
 
-	'debug' => true
-];
+if (!LOCAL) {
+    $config = [
+        'root' => '/files/',
+        'sources' => [
+            'test' => [
+                'root' => '/files/',
+                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/',
+            ],
+            'folder1' => [
+                'root' => '/files/folder1/',
+                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/folder1/',
+                'maxFileSize' => '1kb'
+            ]
+        ],
+        'allowCrossOrigin' => true,
+        'accessControl' => [],
+
+        'debug' => true
+    ];
+} else {
+    $config = [
+        'root' => __DIR__.'/files/',
+        'sources' => [
+            'test' => [
+                'root' => __DIR__.'/files/',
+                'baseurl' => 'http://localhost:8181/files/',
+            ],
+            'folder1' => [
+                'root' => __DIR__.'/files/folder1/',
+                'baseurl' => 'http://localhost:8181/files/folder1/',
+                'maxFileSize' => '1kb'
+            ]
+        ],
+        'allowCrossOrigin' => true,
+        'accessControl' => [],
+
+        'debug' => true
+    ];
+}
 
 $config['roleSessionVar'] = 'JoditUserRole';
 
@@ -43,7 +66,7 @@ $config['accessControl'][] = [
 
 $config['accessControl'][] = [
 	'role'                => '*',
-	'path'                => __DIR__ . '/files/ceicom/',
+	'path'                => LOCAL ? __DIR__ . '/files/ceicom/' : '/files/ceicom/',
 
 	'FILE_MOVE'           => false,
 	'FILE_UPLOAD'         => false,
