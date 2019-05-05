@@ -262,8 +262,10 @@ abstract class BaseApplication {
 						throw new \Exception(isset(Helper::$upload_errors[$files['error'][$i]]) ? Helper::$upload_errors[$files['error'][$i]] : 'Error', $files['error'][$i]);
 					}
 
+					$relative = str_replace($source->getRoot(), '', $source->getPath());
+
 					$tmp_name = $files['tmp_name'][$i];
-					$filename = $files['name'][$i];
+					$filename = $relative . DIRECTORY_SEPARATOR . $files['name'][$i];
 
                     $file = new File($source->getFilesystem(), $filename, $tmp_name);
                     if ($source->maxFileSize and $file->getSize() > Helper::convertToBytes($source->maxFileSize)) {
