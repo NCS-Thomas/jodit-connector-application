@@ -114,8 +114,8 @@ class Config {
         } else {
             $client = new S3Client([
                 'credentials' => [
-                    'key'    => 'AKIAIEVQOUVHUGSYFUIQ',
-                    'secret' => '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',
+                    'key'    => 'xxx',
+                    'secret' => 'xxx',
                 ],
                 'region' => 'eu-west-1',
                 'version' => 'latest',
