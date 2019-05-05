@@ -106,9 +106,10 @@ abstract class Application extends BaseApplication{
 
 		$source = $this->config->getCompatibleSource($this->request->source);
 
-		Helper::downloadRemoteFile($url, $source->getRoot() . $filename);
+		$localFilename = sys_get_temp_dir().'/_'.(string)microtime(true).'-'.$filename;
+		Helper::downloadRemoteFile($url, $localFilename);
 
-		$file = new File($source->getFilesystem(), $filename);
+		$file = new File($source->getFilesystem(), $filename, $localFilename);
 
 		try {
 			if (!$file->isGoodFile($source)) {
@@ -120,6 +121,8 @@ abstract class Application extends BaseApplication{
 			$file->remove();
 			throw $e;
 		}
+
+		$file->save();
 
 		return [
 			'newfilename' => $file->getName(),
@@ -181,14 +184,7 @@ abstract class Application extends BaseApplication{
 
 		$target = $this->request->name;
 
-		if (
-			realpath($path . $target) &&
-			strpos(realpath($path . $target), $source->getRoot()) !== false
-		) {
-			$file_path = realpath($path . $target);
-		}
-
-		if (!$file_path || !$filesystem->has($target)) {
+    	if (!$filesystem->has($target)) {
 			throw new \Exception('File or directory not exists ' . $target, Consts::ERROR_CODE_NOT_EXISTS);
 		}
 
