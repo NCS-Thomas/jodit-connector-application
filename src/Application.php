@@ -214,16 +214,7 @@ abstract class Application extends BaseApplication{
 
         $target = $this->request->name;
 
-        $parentDir = dirname($target) === '.' ? '/' : dirname($target);
-
-        $isDir = false;
-        foreach ($filesystem->listContents($parentDir) as $item) {
-            if ($item['path'] === $target) {
-                $isDir = ('dir' === $item['type']);
-            }
-        }
-
-        if ($isDir) {
+        if ($this->isFolder($target)) {
             $filesystem->deleteDir($target);
         } else {
             throw new \Exception('Directory not exists', Consts::ERROR_CODE_NOT_EXISTS);
@@ -280,7 +271,8 @@ abstract class Application extends BaseApplication{
 		if ($from) {
 			if ($to) {
 			    if ($filesystem->has($from)) {
-			        $filesystem->rename($from, $to);
+                    $this->copyFolder($from, $to);
+                    $filesystem->deleteDir($from);
                 } else {
 					throw new \Exception('Not file', Consts::ERROR_CODE_NOT_EXISTS);
 				}
@@ -436,4 +428,42 @@ abstract class Application extends BaseApplication{
 			'permissions' => $result
 		];
 	}
+
+    /**
+     * @param string $path
+     * @return bool
+     * @throws \Exception
+     */
+    private function isFolder(string $path): bool
+    {
+        $parentDir = dirname($path) === '.' ? '/' : dirname($path);
+
+        $isDir = false;
+        foreach ($this->getSource()->getFilesystem()->listContents($parentDir) as $item) {
+            if ($item['path'] === $path) {
+                $isDir = ('dir' === $item['type']);
+            }
+        }
+
+        return $isDir;
+    }
+
+    /**
+     * @param string $from
+     * @param string $to
+     * @throws \Exception
+     */
+    private function copyFolder(string $from, string $to): void
+    {
+        $filesystem = $this->getSource()->getFilesystem();
+
+        foreach ($filesystem->listContents($from) as $item) {
+            if ('dir' === $item['type']) {
+                $filesystem->createDir($to.DIRECTORY_SEPARATOR.basename($item['path']));
+                $this->copyFolder($item['path'], $to.DIRECTORY_SEPARATOR.basename($item['path']));
+            } else {
+                $filesystem->rename($item['path'], $to.DIRECTORY_SEPARATOR.basename($item['path']));
+            }
+        }
+    }
 }
