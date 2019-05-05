@@ -3,27 +3,63 @@ $I = new ApiTester($scenario);
 
 $I->wantTo('Check moving folder to another directory');
 
-$files_root = realpath(__DIR__ . '/../files') . '/';
+$folder = 'testMove' . rand(10000, 100000);
 
-mkdir($files_root . 'testMove', 0777);
-file_put_contents($files_root . 'testMove/test.txt', 'test');
-
-$I->sendGET('?action=folderMove&source=test&from=testMove&path=folder1');
+// create test folder
+$I->sendGET('?action=folderCreate&source=test&name=' . $folder);
 
 $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); // 200
-
 $I->seeResponseIsJson();
-
-
 $I->seeResponseContainsJson([
-    "success" => true,
-    "data" => [
-        "code" => 220,
+    'success' => true,
+    'data' => [
+        'ƒcode' => 220,
     ]
 ]);
 
-$I->assertFileExists($files_root . 'folder1/testMove/test.txt');
-unlink($files_root . 'folder1/testMove/test.txt');
-rmdir($files_root . 'folder1/testMove');
+// add a test file
+$I->sendPOST('?',  [
+    'action' => 'fileUpload',
+    'source' => 'test',
+    'path' => $folder,
+], ['files' => [
+    realpath(__DIR__ . '/../files/regina.jpg')
+]]);
 
+$I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); // 200
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'success' => true,
+    'data' => [
+        'code' => 220,
+        'files' => [
+            $folder.'/regina.jpg',
+        ],
+        'isImages' => [
+            true,
+        ]
+    ]
+]);
 
+// move the folder
+$I->sendGET('?action=folderMove&source=test&from='.$folder.'&path=folder1');
+
+$I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); // 200
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'success' => true,
+    'data' => [
+        'code' => 220,
+    ]
+]);
+
+// clean up
+$I->sendGET('?action=folderRemove&source=test&name=folder1/'.$folder);
+
+$I->seeResponseIsJson();
+$I->seeResponseContainsJson([
+    'success' => true,
+    'data' => [
+        'code' => 220
+    ]
+]);
