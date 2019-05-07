@@ -187,17 +187,6 @@ class Config {
 			$relativePath = Jodit::$app->request->path ?: '';
 		}
 
-		//always check whether we are below the root category is not reached
-        /*
-		if (realpath($root . $relativePath) && strpos(realpath($root . $relativePath) . Consts::DS, $root) !== false) {
-			$root = realpath($root . $relativePath);
-			if (is_dir($root)) {
-				$root .= Consts::DS;
-			}
-		} else {
-			throw new \Exception('Path does not exist', Consts::ERROR_CODE_NOT_EXISTS);
-		}
-        */
         $root = $root . $relativePath;
 
 		return $root;
