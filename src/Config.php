@@ -192,6 +192,18 @@ class Config {
 		return $root;
 	}
 
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function getRelativePath(): string
+    {
+        $relative = str_replace($this->getRoot(), '', $this->getPath());
+        $relative = (empty($relative)) ? $relative : $relative . DIRECTORY_SEPARATOR;
+
+        return $relative;
+    }
+
 	/**
 	 * Get source by name
 	 *
