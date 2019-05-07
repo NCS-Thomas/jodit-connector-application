@@ -309,11 +309,10 @@ abstract class BaseApplication {
 	public function read(Config $source) {
 	    $filesystem = $source->getFilesystem();
 		$path = $source->getPath();
-        $relative = str_replace($source->getRoot(), '', $path);
 
 		$sourceData = (object)[
 			'baseurl' => $source->baseurl,
-			'path' =>  $relative,
+			'path' =>  $source->getRelativePath(),
 			'files' => [],
 		];
 
@@ -325,7 +324,7 @@ abstract class BaseApplication {
 
 		$config = $this->config;
 
-        foreach ($filesystem->listContents($relative) as $item) {
+        foreach ($filesystem->listContents($source->getRelativePath()) as $item) {
             if ($item['type'] === 'file') {
                 $file = new File($filesystem, $item['path']);
 
