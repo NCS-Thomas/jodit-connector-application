@@ -1,6 +1,6 @@
 <?php
 
-define('LOCAL', false);
+define('LOCAL', ($_ENV['env'] === 'local'));
 
 if (!LOCAL) {
     $config = [

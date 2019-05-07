@@ -1,10 +1,16 @@
 <?php
+
+use Symfony\Component\Dotenv\Dotenv;
+
 if (!in_array(@$_SERVER['REMOTE_ADDR'], ['127.0.0.1', '::1', '[::1]'])) {
 	die('You are not allowed to access this file.');
 }
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/TestApplication.php';
+
+$dotenv = new Dotenv();
+$dotenv->load(__DIR__.'/.env');
 
 $config = require(__DIR__ . "/config.php");
 

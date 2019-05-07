@@ -114,8 +114,8 @@ class Config {
         } else {
             $client = new S3Client([
                 'credentials' => [
-                    'key'    => 'xxx',
-                    'secret' => 'xxx',
+                    'key'    => $_ENV['AWS_KEY'],
+                    'secret' => $_ENV['AWS_SECRET'],
                 ],
                 'region' => 'eu-west-1',
                 'version' => 'latest',
