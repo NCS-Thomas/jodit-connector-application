@@ -13,7 +13,7 @@ $I->seeResponseIsJson();
 $I->seeResponseContainsJson([
     'success' => true,
     'data' => [
-        'ƒcode' => 220,
+        'code' => 220,
     ]
 ]);
 
