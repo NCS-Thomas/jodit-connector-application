@@ -263,9 +263,10 @@ abstract class BaseApplication {
 					}
 
 					$relative = str_replace($source->getRoot(), '', $source->getPath());
+					$relative = (empty($relative)) ? $relative : $relative . DIRECTORY_SEPARATOR;
 
 					$tmp_name = $files['tmp_name'][$i];
-					$filename = $relative . DIRECTORY_SEPARATOR . $files['name'][$i];
+					$filename = $relative . $files['name'][$i];
 
                     $file = new File($source->getFilesystem(), $filename, $tmp_name);
                     if ($source->maxFileSize and $file->getSize() > Helper::convertToBytes($source->maxFileSize)) {
