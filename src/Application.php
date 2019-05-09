@@ -52,17 +52,15 @@ abstract class Application extends BaseApplication{
 				continue;
 			}
 
-			$relative = str_replace(realpath($source->getRoot()) . Consts::DS, '', $path);
-
 			$sourceData = (object)[
 				'baseurl' => $source->baseurl,
-				'path' =>  $relative,
+				'path' =>  $source->getRelativePath(),
 				'folders' => [],
 			];
 
 			$sourceData->folders[] = $path == $source->getRoot() ? '.' : '..';
 
-			foreach ($source->getFilesystem()->listContents($relative) as $file) {
+			foreach ($source->getFilesystem()->listContents($source->getRelativePath()) as $file) {
 			    list($type, $name) = array_values($file);
 
 			    if ($type === 'dir'
