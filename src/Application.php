@@ -430,25 +430,6 @@ abstract class Application extends BaseApplication{
 	}
 
     /**
-     * @param string $path
-     * @return bool
-     * @throws \Exception
-     */
-    private function isFolder(string $path): bool
-    {
-        $parentDir = dirname($path) === '.' ? '/' : dirname($path);
-
-        $isDir = false;
-        foreach ($this->getSource()->getFilesystem()->listContents($parentDir) as $item) {
-            if ($item['path'] === $path) {
-                $isDir = ('dir' === $item['type']);
-            }
-        }
-
-        return $isDir;
-    }
-
-    /**
      * @param string $from
      * @param string $to
      * @throws \Exception

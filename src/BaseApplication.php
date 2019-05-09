@@ -322,6 +322,13 @@ abstract class BaseApplication {
 			return $sourceData;
 		}
 
+        if (!empty($source->getRelativePath()) &&
+            !$filesystem->has($source->getRelativePath()) &&
+            !$this->isFolder($source->getRelativePath())
+        ) {
+            throw new \Exception('Folder not found', Consts::ERROR_CODE_NOT_EXISTS);
+        }
+
 		$config = $this->config;
 
         foreach ($filesystem->listContents($source->getRelativePath()) as $item) {
@@ -367,4 +374,23 @@ abstract class BaseApplication {
 
 		return $source;
 	}
+
+    /**
+     * @param string $path
+     * @return bool
+     * @throws \Exception
+     */
+    protected function isFolder(string $path): bool
+    {
+        $parentDir = dirname($path) === '.' ? '/' : dirname($path);
+
+        $isDir = false;
+        foreach ($this->getSource()->getFilesystem()->listContents($parentDir) as $item) {
+            if ($item['path'] === $path) {
+                $isDir = ('dir' === $item['type']);
+            }
+        }
+
+        return $isDir;
+    }
 }
