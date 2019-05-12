@@ -14,7 +14,7 @@ use League\Flysystem\Filesystem;
 
 class Image
 {
-    static $colors = [
+    private static $colors = [
         [228, 84, 83],
         [237, 234, 67],
         [122, 223, 237],
@@ -31,7 +31,12 @@ class Image
         [0, 106, 180],
     ];
 
-    static function luminate($color, $percent)
+    /**
+     * @param array $color
+     * @param int $percent
+     * @return array
+     */
+    static function luminate(array $color, int $percent): array
     {
         foreach ($color as &$value) {
             $value = min(max(0, self::luminateValue($value, $percent)), 255);
@@ -40,7 +45,12 @@ class Image
         return $color;
     }
 
-    static function luminateValue($value, $percent)
+    /**
+     * @param int $value
+     * @param int $percent
+     * @return int
+     */
+    static function luminateValue(int $value, int $percent): int
     {
         // no change
         if ($percent == 50) {
@@ -56,13 +66,11 @@ class Image
         }
 
         // lighten color
-
         // reverse ratio
         $ratio = 2 - $ratio;
-
         $diff = (255 - $value) * $ratio;
 
-        return 255 - $diff;
+        return round(255 - $diff);
     }
 
     static function ImageRectangleWithRoundedCorners(&$im, $x1, $y1, $x2, $y2, $radius, $color)
