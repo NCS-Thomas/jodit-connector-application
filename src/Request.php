@@ -20,9 +20,12 @@ namespace Jodit;
  * @property string $url
  * @property array $box
  */
-class Request {
+class Request
+{
 	private $_raw_data = [];
-	function __construct() {
+
+	public function __construct()
+    {
 		$data = file_get_contents('php://input');
 		if ($data) {
 			switch ($_SERVER["CONTENT_TYPE"]) {
@@ -36,7 +39,8 @@ class Request {
 		}
 	}
 
-	function get($key, $default_value = null) {
+	public function get($key, $default_value = null)
+    {
 		if (isset($_REQUEST[$key])) {
 			return $_REQUEST[$key];
 		}
@@ -46,11 +50,13 @@ class Request {
 		return $default_value;
 	}
 
-	function __get($key) {
+	public function __get($key)
+    {
 		return $this->get($key);
 	}
 
-	function post($keys, $default_value = null) {
+	public function post($keys, $default_value = null)
+    {
 		$keys_chain = explode('/', $keys);
 		$result = $_POST;
 
