@@ -73,7 +73,7 @@ class Image
         return round(255 - $diff);
     }
 
-    static function ImageRectangleWithRoundedCorners(&$im, $x1, $y1, $x2, $y2, $radius, $color)
+    private static function ImageRectangleWithRoundedCorners(&$im, $x1, $y1, $x2, $y2, $radius, $color)
     {
         imagefilledrectangle($im, $x1 + $radius, $y1, $x2 - $radius, $y2, $color);
         imagefilledrectangle($im, $x1, $y1 + $radius, $x2, $y2 - $radius, $color);
@@ -83,7 +83,7 @@ class Image
         imagefilledellipse($im, $x2 - $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
     }
 
-    static function generateIcon(Filesystem $filesystem, File $file, $iconname, $width = 100, $height = 100)
+    private static function generateIcon(Filesystem $filesystem, File $file, $iconname, $width = 100, $height = 100)
     {
         $im = imagecreatetruecolor($width, $height);
         imageantialias($im, true);
@@ -206,7 +206,7 @@ class Image
      * @return \Jodit\File
      * @throws \Exception
      */
-    static function getThumb(Filesystem $filesystem, File $file, Config $config)
+    public static function getThumb(Filesystem $filesystem, File $file, Config $config)
     {
         $path = $file->getFolder();
 
