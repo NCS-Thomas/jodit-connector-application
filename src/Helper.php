@@ -131,12 +131,11 @@ abstract class Helper {
 
 	/**
 	 * @param $string
-	 *
 	 * @return string
 	 */
-	static function Upperize($string) {
-		$string = preg_replace('#([a-z])([A-Z])#', '\1_\2', $string);
-		return strtoupper($string);
+	static function Upperize(string $string): string
+    {
+		return strtoupper(preg_replace('#([a-z])([A-Z])#', '\1_\2', $string));
 	}
 
 	/**
