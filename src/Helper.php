@@ -140,17 +140,13 @@ abstract class Helper {
 	}
 
 	/**
-	 * @param $string
-	 *
+	 * @param string $string
 	 * @return string
 	 */
-	static function CamelCase($string) {
-		$string = preg_replace_callback('#([_])(\w)#', function ($m) {
-			return strtoupper($m[2]);
-		}, strtolower($string));
-
-		return ucfirst($string);
-	}
+	static function CamelCase(string $string): string
+    {
+        return str_replace('_', '', ucwords(strtolower($string), '_'));
+    }
 
     /**
      * @param string $path
