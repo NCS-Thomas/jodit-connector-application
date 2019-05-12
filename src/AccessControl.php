@@ -35,17 +35,24 @@ class AccessControl
         'IMAGE_RESIZE' => true,
         'IMAGE_CROP' => true,
     ];
-
-
+    
     /**
      * @param array $list
      */
-    public function setAccessList($list)
+    public function setAccessList(array $list): void
     {
         $this->accessList = $list;
     }
 
-    public function checkPermission($role, $action, $path = '/', $fileExtension = '*')
+    /**
+     * @param string $role
+     * @param string $action
+     * @param string $path
+     * @param string $fileExtension
+     * @return bool
+     * @throws \Exception
+     */
+    public function checkPermission(string $role, string $action, string $path = '/', string $fileExtension = '*'): bool
     {
         if (!$this->isAllow($role, $action, $path, $fileExtension)) {
             throw new \Exception('Access denied', Consts::ERROR_CODE_FORBIDDEN);
