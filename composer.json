@@ -14,6 +14,7 @@
     "require": {
         "php": ">=5.4.0",
         "ext-curl": ">=6.0.0",
+        "ext-gd": "^7.1",
         "abeautifulsite/simpleimage": "^2.6",
         "league/flysystem-memory": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0"
