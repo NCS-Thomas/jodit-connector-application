@@ -17,7 +17,7 @@ class HelperTest extends \Codeception\Test\Unit
     }
 
     // tests
-    public function testUpperaze()
+    public function testUpperize()
     {
 		$this->assertEquals('FILE_UPLOAD', \Jodit\Helper::Upperize('fileUpload'));
 		$this->assertEquals('FILE_UPLOAD', \Jodit\Helper::Upperize('FileUpload'));
