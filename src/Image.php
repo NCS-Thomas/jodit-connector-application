@@ -73,17 +73,17 @@ class Image
         return round(255 - $diff);
     }
 
-    private static function ImageRectangleWithRoundedCorners(&$im, $x1, $y1, $x2, $y2, $radius, $color)
+    private static function ImageRectangleWithRoundedCorners(&$image, $x1, $y1, $x2, $y2, $radius, $color)
     {
-        imagefilledrectangle($im, $x1 + $radius, $y1, $x2 - $radius, $y2, $color);
-        imagefilledrectangle($im, $x1, $y1 + $radius, $x2, $y2 - $radius, $color);
-        imagefilledellipse($im, $x1 + $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($im, $x2 - $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($im, $x1 + $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
-        imagefilledellipse($im, $x2 - $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
+        imagefilledrectangle($image, $x1 + $radius, $y1, $x2 - $radius, $y2, $color);
+        imagefilledrectangle($image, $x1, $y1 + $radius, $x2, $y2 - $radius, $color);
+        imagefilledellipse($image, $x1 + $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($image, $x2 - $radius, $y1 + $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($image, $x1 + $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
+        imagefilledellipse($image, $x2 - $radius, $y2 - $radius, $radius * 2, $radius * 2, $color);
     }
 
-    private static function generateIcon(Filesystem $filesystem, File $file, $iconname, $width = 100, $height = 100)
+    private static function generateIcon(Filesystem $filesystem, File $file, $iconName, $width = 100, $height = 100)
     {
         $im = imagecreatetruecolor($width, $height);
         imageantialias($im, true);
@@ -195,7 +195,7 @@ class Image
         imagecolordeallocate($im, $white);
         imagedestroy($im);
 
-        $filesystem->put($iconname, file_get_contents($tempFile));
+        $filesystem->put($iconName, file_get_contents($tempFile));
     }
 
     /**
