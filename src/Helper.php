@@ -112,7 +112,6 @@ abstract class Helper {
 			curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_3) ' .
                 'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.99 YaBrowser/19.1.1.907 Yowser/2.5 Safari/537.36');
 
-
 			$raw = curl_exec($ch);
 
             if (!$raw) {
@@ -130,7 +129,7 @@ abstract class Helper {
 	}
 
 	/**
-	 * @param $string
+	 * @param string $string
 	 * @return string
 	 */
 	static function Upperize(string $string): string
