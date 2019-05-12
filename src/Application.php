@@ -174,7 +174,6 @@ abstract class Application extends BaseApplication{
 	public function actionFileRemove() {
 		$source = $this->getSource();
         $filesystem = $source->getFilesystem();
-		$file_path = false;
 
 		$path = $source->getPath();
 
