@@ -36,7 +36,7 @@ class Image
      * @param int $percent
      * @return array
      */
-    static function luminate(array $color, int $percent): array
+    private static function luminate(array $color, int $percent): array
     {
         foreach ($color as &$value) {
             $value = min(max(0, self::luminateValue($value, $percent)), 255);
@@ -50,7 +50,7 @@ class Image
      * @param int $percent
      * @return int
      */
-    static function luminateValue(int $value, int $percent): int
+    private static function luminateValue(int $value, int $percent): int
     {
         // no change
         if ($percent == 50) {
