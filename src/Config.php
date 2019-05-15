@@ -92,12 +92,13 @@ class Config {
 		return $this->parent ? $this->parent->{$key} : null;
 	}
 
-	/**
-	 * Config constructor.
-	 *
-	 * @param array $data
-	 * @param null | false | Config $parent
-	 */
+    /**
+     * Config constructor.
+     *
+     * @param array $data
+     * @param null | false | Config $parent
+     * @throws \Exception
+     */
 	function __construct($data, $parent = null)
     {
         $this->parent = $parent;
@@ -164,13 +165,13 @@ class Config {
 		throw new \Exception('Set root directory for source', Consts::ERROR_CODE_NOT_IMPLEMENTED);
 	}
 
-	/**
-	 * Get full path for $_REQUEST[$name] relative path with trailing slash(if directory)
-	 *
-	 * @param string $relativePath
-	 * @return bool|string
-	 * @throws \Exception
-	 */
+    /**
+     * Get full path for $_REQUEST[$name] relative path with trailing slash(if directory)
+     *
+     * @param bool $relativePath
+     * @return bool|string
+     * @throws \Exception
+     */
 	public function getPath ($relativePath = false) {
 		$root = $this->getRoot();
 
