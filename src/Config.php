@@ -71,6 +71,11 @@ class Config {
 	private $data = [];
 
 	/**
+     * @var Filesystem
+     */
+	private $filesystem;
+
+	/**
 	 * @var Config[]
 	 */
 	public $sources = [];
