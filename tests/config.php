@@ -1,8 +1,13 @@
 <?php
 
+use Aws\S3\S3Client;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\AwsS3v3\AwsS3Adapter;
+
 define('LOCAL', ($_ENV['env'] === 'local'));
 
 // define filesystem
+$config['adapter'] = null;
 if (LOCAL) {
     $config = [
         'root' => __DIR__.'/files/',
@@ -18,6 +23,8 @@ if (LOCAL) {
             ]
         ],
     ];
+
+    $config['adapter'] = new Local($config['root']);
 } else {
     $config = [
         'root' => '/files/',
@@ -33,6 +40,17 @@ if (LOCAL) {
             ]
         ],
     ];
+
+    $client = new S3Client([
+        'credentials' => [
+            'key'    => $_ENV['AWS_KEY'],
+            'secret' => $_ENV['AWS_SECRET'],
+        ],
+        'region' => 'eu-west-1',
+        'version' => 'latest',
+    ]);
+
+    $config['adapter'] = new AwsS3Adapter($client, 'images.ncs.ninja', 'files/');
 }
 
 $config = array_merge($config, [
