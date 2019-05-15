@@ -20,6 +20,10 @@ abstract class BaseApplication {
 	 */
 	public $request;
 
+	/**
+     * @property float
+     */
+	public $elapsedTime;
 
 	/**
 	 * @property string $action
