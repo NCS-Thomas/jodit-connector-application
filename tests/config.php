@@ -46,11 +46,11 @@ if (LOCAL) {
             'key'    => $_ENV['AWS_KEY'],
             'secret' => $_ENV['AWS_SECRET'],
         ],
-        'region' => 'eu-west-1',
-        'version' => 'latest',
+        'region' => $_ENV['AWS_REGION'],
+        'version' => $_ENV['AWS_VERSION'],
     ]);
 
-    $config['adapter'] = new AwsS3Adapter($client, 'images.ncs.ninja', 'files/');
+    $config['adapter'] = new AwsS3Adapter($client, $_ENV['AWS_S3_BUCKET_NAME'], $config['root']);
 }
 
 $config = array_merge($config, [
