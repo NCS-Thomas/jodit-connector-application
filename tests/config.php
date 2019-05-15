@@ -17,10 +17,6 @@ if (LOCAL) {
                 'maxFileSize' => '1kb'
             ]
         ],
-        'allowCrossOrigin' => true,
-        'accessControl' => [],
-
-        'debug' => true
     ];
 } else {
     $config = [
@@ -36,14 +32,15 @@ if (LOCAL) {
                 'maxFileSize' => '1kb'
             ]
         ],
-        'allowCrossOrigin' => true,
-        'accessControl' => [],
-
-        'debug' => true
     ];
 }
 
-$config['roleSessionVar'] = 'JoditUserRole';
+$config = array_merge($config, [
+    'allowCrossOrigin' => true,
+    'accessControl' => [],
+    'debug' => true,
+    'roleSessionVar' => 'JoditUserRole'
+]);
 
 $config['accessControl'][] = [
 	'role'                => '*',
