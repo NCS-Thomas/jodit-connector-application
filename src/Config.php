@@ -9,11 +9,8 @@
  */
 namespace Jodit;
 
-use Aws\S3\S3Client;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\AwsS3v3\AwsS3Adapter;
+use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Filesystem;
-use League\Flysystem\Memory\MemoryAdapter;
 
 /**
  * Class Config
@@ -96,44 +93,33 @@ class Config {
 	 * @param array $data
 	 * @param null | false | Config $parent
 	 */
-	function __construct($data, $parent = null) {
-		$this->parent = $parent;
-		$data = (object)$data;
-		$this->data = $data;
+	function __construct($data, $parent = null)
+    {
+        $this->parent = $parent;
+        $data = (object)$data;
+        $this->data = $data;
 
-		$adapter = isset($data->adapter) ? $data->adapter : 'local';
-
-		$this->adapter = null;
-
-		if (LOCAL) {
-            if (!empty($data->root)) {
-                if ($adapter === 'local') {
-                    $this->adapter = new Local($data->root);
-                }
-            }
+        if (null !== $parent && false !== $parent) {
+            $this->filesystem = $parent->filesystem;
         } else {
-            $client = new S3Client([
-                'credentials' => [
-                    'key'    => $_ENV['AWS_KEY'],
-                    'secret' => $_ENV['AWS_SECRET'],
-                ],
-                'region' => 'eu-west-1',
-                'version' => 'latest',
-            ]);
+            if (!isset($this->data->adapter) || !($this->data->adapter instanceOf AbstractAdapter)) {
+                throw new \Exception('Invalid or no Flysystem adapter specified');
+            }
 
-            $this->adapter = new AwsS3Adapter($client, 'images.ncs.ninja', 'files/');
-        }
-
-		$this->filesystem = null;
-		if ($this->adapter) {
-		    $this->filesystem = new Filesystem($this->adapter);
+            $this->filesystem = new Filesystem($data->adapter);
         }
 
 		if ($parent === null) {
 			if (!$this->baseurl) {
 				$this->baseurl = ((isset($_SERVER['HTTPS']) and $_SERVER['HTTPS']) ? 'https://' : 'http://') . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '') . '/';
 			}
-			$this->parent = new Config(self::$defaultOptions, false);
+
+			$options = array_merge(self::$defaultOptions, [
+			    'adapter' => $this->data->adapter,
+                'filesystem' => $this->filesystem,
+            ]);
+
+			$this->parent = new Config($options, false);
 		}
 
 		if (isset($data->sources) and is_array($data->sources) and count($data->sources)) {
