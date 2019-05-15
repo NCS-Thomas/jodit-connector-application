@@ -2,26 +2,8 @@
 
 define('LOCAL', ($_ENV['env'] === 'local'));
 
-if (!LOCAL) {
-    $config = [
-        'root' => '/files/',
-        'sources' => [
-            'test' => [
-                'root' => '/files/',
-                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/',
-            ],
-            'folder1' => [
-                'root' => '/files/folder1/',
-                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/folder1/',
-                'maxFileSize' => '1kb'
-            ]
-        ],
-        'allowCrossOrigin' => true,
-        'accessControl' => [],
-
-        'debug' => true
-    ];
-} else {
+// define filesystem
+if (LOCAL) {
     $config = [
         'root' => __DIR__.'/files/',
         'sources' => [
@@ -32,6 +14,25 @@ if (!LOCAL) {
             'folder1' => [
                 'root' => __DIR__.'/files/folder1/',
                 'baseurl' => 'http://localhost:8181/files/folder1/',
+                'maxFileSize' => '1kb'
+            ]
+        ],
+        'allowCrossOrigin' => true,
+        'accessControl' => [],
+
+        'debug' => true
+    ];
+} else {
+    $config = [
+        'root' => '/files/',
+        'sources' => [
+            'test' => [
+                'root' => '/files/',
+                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/',
+            ],
+            'folder1' => [
+                'root' => '/files/folder1/',
+                'baseurl' => 'https://s3-eu-west-1.amazonaws.com/images.ncs.ninja/files/folder1/',
                 'maxFileSize' => '1kb'
             ]
         ],
