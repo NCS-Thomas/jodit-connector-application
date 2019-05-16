@@ -154,4 +154,14 @@ abstract class Helper {
     {
 		return preg_replace('#[\\\\/]+#', '/', $path);
 	}
+
+    /**
+     * @param array $array The array to get a value from
+     * @param string $index The index of the value to get
+     * @param mixed $default
+     * @return mixed
+     */
+    public static function array_get(array $array, string $index, $default = null) {
+        return isset($array[$index]) ? $array[$index] : $default;
+    }
 }

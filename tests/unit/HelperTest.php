@@ -34,4 +34,10 @@ class HelperTest extends \Codeception\Test\Unit
 		$this->assertEquals('C:/sdfsdf/', \Jodit\Helper::NormalizePath('C:/sdfsdf/'));
 		$this->assertEquals('C:/sdfsdf/', \Jodit\Helper::NormalizePath('C://\\sdfsdf/'));
 	}
+
+	public function testArray_get() {
+        $this->assertEquals('bar', \Jodit\Helper::array_get(['foo' => 'bar'], 'foo'));
+        $this->assertEquals(false, \Jodit\Helper::array_get([], 'foo', false));
+        $this->assertEquals(null, \Jodit\Helper::array_get([], 'foo'));
+    }
 }
