@@ -61,9 +61,10 @@ abstract class Application extends BaseApplication{
 			$sourceData->folders[] = $path == $source->getRoot() ? '.' : '..';
 
 			foreach ($source->getFilesystem()->listContents($source->getRelativePath()) as $file) {
-			    list($type, $name) = array_values($file);
+                $name = Helper::array_get($file, 'name');
+                $type = Helper::array_get($file, 'type');
 
-			    if ($type === 'dir'
+                if ($type === 'dir'
                     && (!$this->config->createThumb || $name !== $this->config->thumbFolderName)
                     && !in_array($name, $this->config->excludeDirectoryNames)
                 ) {
