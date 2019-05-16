@@ -203,7 +203,7 @@ class File
      */
     function getPathByRoot(Config $source) {
         $path = preg_replace('#[\\\\/]#', '/', $this->getPath());
-        $root = preg_replace('#[\\\\/]#', '/',  $source->getPath());
+        $root = preg_replace('#[\\\\/]#', '/',  $source->getRelativePath());
 
         return str_replace($root, '', $path);
     }
