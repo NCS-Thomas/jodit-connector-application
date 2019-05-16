@@ -191,7 +191,10 @@ class Config {
     public function getRelativePath(): string
     {
         $relative = str_replace($this->getRoot(), '', $this->getPath());
-        $relative = (empty($relative)) ? $relative : $relative . DIRECTORY_SEPARATOR;
+
+        if (!empty($relative) && DIRECTORY_SEPARATOR !== substr($relative, -1)) {
+            $relative = $relative . DIRECTORY_SEPARATOR;
+        }
 
         return $relative;
     }
