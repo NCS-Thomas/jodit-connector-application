@@ -9,7 +9,6 @@
 
 namespace Jodit;
 
-use abeautifulsite\SimpleImage;
 use League\Flysystem\Filesystem;
 
 class Image
@@ -218,7 +217,7 @@ class Image
         if (!$filesystem->has($thumbName)) {
             if ($file->isImage()) {
                 try {
-                    $img = new SimpleImage($file->getPath());
+                    $img = new SimpleImage($filesystem, $file->getPath());
                     $img
                         ->best_fit(150, 150)
                         ->save($thumbName, $config->quality);
