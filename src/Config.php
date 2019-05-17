@@ -10,6 +10,7 @@
 namespace Jodit;
 
 use League\Flysystem\Adapter\AbstractAdapter;
+use League\Flysystem\Cached\CachedAdapter;
 use League\Flysystem\Filesystem;
 
 /**
@@ -108,7 +109,8 @@ class Config {
         if (null !== $parent && false !== $parent) {
             $this->filesystem = $parent->filesystem;
         } else {
-            if (!isset($this->data->adapter) || !($this->data->adapter instanceOf AbstractAdapter)) {
+            if (!isset($this->data->adapter)
+                || (!($this->data->adapter instanceOf AbstractAdapter) && !($this->data->adapter instanceof CachedAdapter))) {
                 throw new \Exception('Invalid or no Flysystem adapter specified');
             }
 
