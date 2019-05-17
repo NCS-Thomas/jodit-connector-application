@@ -198,6 +198,10 @@ class Config {
             $relative = $relative . DIRECTORY_SEPARATOR;
         }
 
+        if (DIRECTORY_SEPARATOR === $relative) {
+            $relative = '';
+        }
+
         return $relative;
     }
 
