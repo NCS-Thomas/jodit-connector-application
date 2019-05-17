@@ -386,6 +386,10 @@ abstract class BaseApplication {
      */
     protected function isFolder(string $path): bool
     {
+        if (DIRECTORY_SEPARATOR === substr($path, -1)) {
+            $path = substr($path, 0, -1);
+        }
+
         $parentDir = dirname($path) === '.' ? '/' : dirname($path);
 
         $isDir = false;
