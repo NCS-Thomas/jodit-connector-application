@@ -210,7 +210,8 @@ abstract class Application extends BaseApplication{
 
         $this->accessControl->checkPermission($this->getUserRole(), $this->action, $path);
 
-        $target = $this->request->name;
+        // @todo this seems to be a bug in the editor, I receive the folder name in path not in name.
+        $target = $source->getRelativePath() . $this->request->name ?: $this->request->path;
 
         if ($this->isFolder($target)) {
             $filesystem->deleteDir($target);
