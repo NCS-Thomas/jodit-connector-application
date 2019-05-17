@@ -185,7 +185,7 @@ class Image
         $px = (($width - $width / 5) - ($box[2] - $box[0])) / 2;
         imagettftext($im, 20, 0, $px, $height - $height / 4.5, $white, __DIR__.'/assets/arial.ttf', strtoupper($word));
 
-        $tempFile = sys_get_temp_dir().'_icon'.(string)microtime().'.png';
+        $tempFile = sys_get_temp_dir().'/_icon'.(string)microtime().'.png';
         imagepng($im, $tempFile);
         imagecolordeallocate($im, $black);
         imagecolordeallocate($im, $main);
