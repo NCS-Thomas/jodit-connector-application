@@ -92,7 +92,12 @@ abstract class BaseApplication {
 		return isset($_SESSION[$this->config->roleSessionVar]) ? $_SESSION[$this->config->roleSessionVar] : $this->config->defaultRole;
 	}
 
-	public function execute () {
+    /**
+     * @param bool $display
+     * @throws \Exception
+     */
+    public function execute ($display = true): void
+    {
 		$methods =  get_class_methods($this);
 
 		if (!in_array('action' . ucfirst($this->action), $methods)) {
@@ -107,7 +112,9 @@ abstract class BaseApplication {
 		$this->response->success = true;
 		$this->response->data->code = 220;
 
-		$this->display();
+		if ($display) {
+		    $this->display();
+        }
 	}
 
 	/**
