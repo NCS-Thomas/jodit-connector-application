@@ -349,7 +349,7 @@ abstract class BaseApplication {
                 if ($file->isGoodFile($source)) {
                     $item = [
                         'file' => $file->getName(),
-                        'changed' => date($config->datetimeFormat, $item['timestamp']),
+                        'changed' => date($config->datetimeFormat, (isset($item['timestamp']) ? $item['timestamp'] : time())),
                         'size' => Helper::humanFileSize($item['size']),
                         'isImage' => $file->isImage(),
                     ];
