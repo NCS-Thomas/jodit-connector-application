@@ -61,7 +61,7 @@ abstract class Application extends BaseApplication{
 			$sourceData->folders[] = $path == $source->getRoot() ? '.' : '..';
 
 			foreach ($source->getFilesystem()->listContents($source->getRelativePath()) as $file) {
-                $name = Helper::array_get($file, 'name');
+                $name = Helper::array_get($file, 'filename');
                 $type = Helper::array_get($file, 'type');
 
                 if ($type === 'dir'
