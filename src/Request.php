@@ -9,6 +9,8 @@
 
 namespace Jodit;
 
+use Riimu\Kit\PathJoin\Path;
+
 /**
  * Class Request
  * @package jodit
@@ -37,6 +39,8 @@ class Request
 
 			}
 		}
+
+		$this->sanitize();
 	}
 
 	public function get($key, $default_value = null)
@@ -71,4 +75,16 @@ class Request
 
 		return $result;
 	}
+
+	private function sanitize(): void
+    {
+        if (isset($_REQUEST['path'])) {
+            $_REQUEST['path'] = Path::normalize($_REQUEST['path']);
+        }
+
+        if (isset($this->_raw_data['path'])) {
+            $this->_raw_data['path'] = Path::normalize($this->_raw_data['path']);
+        }
+
+    }
 }

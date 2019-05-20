@@ -12,6 +12,7 @@ namespace Jodit;
 use League\Flysystem\Adapter\AbstractAdapter;
 use League\Flysystem\Cached\CachedAdapter;
 use League\Flysystem\Filesystem;
+use Riimu\Kit\PathJoin\Path;
 
 /**
  * Class Config
@@ -154,14 +155,7 @@ class Config {
 	 */
 	public function getRoot() {
 		if ($this->root) {
-		    /*
-            if (!$this->filesystem->has($this->root)) {
-				throw new \Exception('Root directory not exists ' . $this->root, Consts::ERROR_CODE_NOT_EXISTS);
-			}
-		    */
-
-			//return realpath($this->root) . Consts::DS;
-            return $this->root;
+            return Path::normalize($this->root) . DIRECTORY_SEPARATOR;
 		}
 
 		throw new \Exception('Set root directory for source', Consts::ERROR_CODE_NOT_IMPLEMENTED);
@@ -183,7 +177,7 @@ class Config {
 
         $root = $root . $relativePath;
 
-		return $root;
+		return Path::normalize($root) . DIRECTORY_SEPARATOR;
 	}
 
     /**
